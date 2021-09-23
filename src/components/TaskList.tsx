@@ -16,7 +16,6 @@ export function TaskList() {
   const [error, setError] = useState(false);
 
   function handleCreateNewTask() {
-    // Crie uma nova task com um id random, não permita criar caso o título seja vazio.
     if (!newTaskTitle) {
       setError(true);
       return;
@@ -35,11 +34,19 @@ export function TaskList() {
   }
 
   function handleToggleTaskCompletion(id: number) {
-    // Altere entre `true` ou `false` o campo `isComplete` de uma task com dado ID
+    const mappedTasks = tasks.map((task) =>
+      task.id === id
+        ? {
+            ...task,
+            isComplete: !task.isComplete,
+          }
+        : task
+    );
+
+    setTasks(mappedTasks);
   }
 
   function handleRemoveTask(id: number) {
-    // Remova uma task da listagem pelo ID
     setTasks((state) => state.filter((task) => task.id !== id));
   }
 
@@ -56,6 +63,11 @@ export function TaskList() {
             onChange={(e) => setNewTaskTitle(e.target.value)}
             value={newTaskTitle}
             className={error ? "input-error" : ""}
+            onKeyPress={(key) => {
+              if (key.key === "Enter") {
+                handleCreateNewTask();
+              }
+            }}
           />
           <button type="submit" data-testid="add-task-button" onClick={handleCreateNewTask}>
             <FiCheckSquare size={16} color="#fff" />
